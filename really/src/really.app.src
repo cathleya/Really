@@ -1,0 +1,9 @@
+{application, 'really', [
+	{description, "New project"},
+	{vsn, "0.1.0"},
+	{modules, ['data_handler','really_app','really_handler','really_sup','rest_handler','talk_handler','web_handler']},
+	{registered, [really_sup]},
+	{applications, [kernel,stdlib,mnesia,cowboy,jsx]},
+	{mod, {really_app, []}},
+	{env, []}
+]}.

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Sample conversation Application</title>
+
+    <script src="/static/js/jquery-3.1.1.js"></script>
+    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+      $( document ).ready(function(){
+      
+        $( "#registeraction" ).on( "click", function( event ) {
+
+             var requrl = "/home/rest_handler/register";
+            // var requrl = "/home/rest_handler/login";
+
+            // var requrl = "/home/rest_handler/trycall";
+
+            // $.each(list,function(index,element) {
+            //     arr.push('<div><span>'+index+'</span><span>'+element+'</span></div>')
+            // })
+
+            var uname = $("#uname").val();
+            var upwd = $("#upwd").val();
+            var unick = $("#unick").val();
+            var uemail = $("#uemail").val();
+            // var ualator = $("#ualator").val();
+
+            if (uname.length<4) {
+              $( "#alertarea").css("display","block");
+              $( "#alertinfo").text("用户名不能太短");
+              return;
+            }
+
+            if (upwd.length<4) {
+              $( "#alertarea").css("display","block");
+              $( "#alertinfo").text("密码不太短");
+              return;
+            }
+
+            if (unick.length<2) {
+              $( "#alertarea").css("display","block");
+              $( "#alertinfo").text("昵称不能太短");
+              return;
+            }
+
+            if (uemail.length<4) {
+              $( "#alertarea").css("display","block");
+              $( "#alertinfo").text("邮箱不正确");
+              return;
+            }
+
+            var btn = $(event.target);
+            btn.button('loading');
+
+            $.ajax({
+                url: requrl,
+                method: "POST",
+                data: { 'uname' : uname,'upwd':upwd,'unick':unick,'uemail':uemail}
+            }).done(function( resp ) {
+
+                if ( resp.status == 0 ) {
+
+                    $(".registerbody").css("display","none");
+                    $(".registersuccess").css("display","block");
+
+                }else if (resp.status == 2) {
+                    $( "#alertarea").css("display","block");
+                    $( "#alertinfo").text("用户已存在，请重新注册");
+                }else{
+                    $( "#alertarea").css("display","block");
+                    $( "#alertinfo").text(resp.msg);
+                }
+                
+
+            }).fail(function( jqXHR, textStatus ) {
+
+                $( "#alertarea").css("display","block");
+                $( "#alertinfo").text("网络异常");
+
+            }).always(function() {
+              btn.button('reset');
+              console.log("complete"); 
+
+          })
+
+        });
+
+
+      });
+
+    </script>
+
+    <style type="text/css">
+      body{
+        margin: 0px;
+        padding: 0px;
+        background-color: #FFFCEE;
+      }
+      header{
+        width: 100%;
+        height: 100px;
+        background: #fe5591;
+      }
+      .handtitle{
+        margin-right: auto;
+        margin-left: auto;
+        line-height: 100px;
+        height: 1000px;
+        color: #fff;
+        width: 80%;
+        size: 30px;
+        
+      }
+      #alertarea{
+        display: none;
+      }
+      .content{
+        width: 80%;
+        height: 1000px;
+        background: #f9f9f9;
+        margin-right: auto;
+        margin-left: auto;
+        overflow:hidden;
+        padding-bottom:100px;
+        
+      }
+
+      .registerbody{
+          background: #febc55;
+          border-radius: 5px;
+          margin-right: auto;
+          margin-left: auto;
+          overflow:hidden;
+          margin-top: 100px;
+          padding: 20px;
+          width: 400px;
+          border: #D8CDA7;
+      }
+
+      .registersuccess{
+          background: #cd53f8;
+          border-radius: 5px;
+          margin-right: auto;
+          margin-left: auto;
+          overflow:hidden;
+          margin-top: 100px;
+          padding: 20px;
+          width: 400px;
+          height: 300px;
+          display: none;
+          line-height: 300px;
+          text-align: center;
+          font-size: 30;
+          color: #ffffff;
+      }
+
+      .username{
+          background: #ffffff;
+          border: 1px solid #E7FFF2;
+          margin-top: 10px;
+          margin-right: auto;
+          margin-left: auto;
+          display: flex;
+          width: 220px;
+          height: 35px;
+          border-radius: 5px;
+          overflow: hidden;
+      }
+      .hintplace{
+        border-right: 1px solid #E7FFF2;
+        text-align: center;
+        line-height: 35px;
+        padding-left: 5px;
+        color: #656565;
+        height: 35px;
+        width: 60px;
+      }
+      .inputzone{
+        background-color: #ffffff;
+        border: none;
+        width: 170px;
+        height: 35px;
+      }
+      .subumit{
+        background-color: #fb2e76;
+        color: #fff;
+        border-radius: 5px;
+        margin-top: 20px;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 10px;
+        border:none;
+        display: block;
+        width: 220px;
+        height: 40px;
+      }
+
+      footer{
+        width: 100%;
+        height: 100px;
+        bottom:0px;
+        background: #fe5591;
+
+      }
+
+    </style>
+
+  </head>
+  <body>
+
+      <header>
+        <div class="handtitle">会话应用注册</div>
+      </header> 
+
+      <div class="content">
+          <div  id = "alertarea" class="alert alert-warning">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>警告！</strong><span id="alertinfo">您的网络连接有问题。</span>
+          </div>
+
+          <div class="registersuccess">注册成功</div>
+          <div class="registerbody">
+              <div id="username" class="username">
+                <div class="hintplace">用户名</div><input type="text" class="inputzone" id="uname" />
+              </div>
+              <div id="username" class="username">
+                <div class="hintplace">密码</div><input type="text" class="inputzone" id="upwd" />
+              </div>
+              <div id="username" class="username">
+                <div class="hintplace">昵称</div><input type="text" class="inputzone" id="unick" />
+              </div>
+              <div id="username" class="username">
+                <div class="hintplace">邮箱</div><input type="text" class="inputzone" id="uemail" />
+              </div>
+<!--               <div id="username" class="username">
+                <div class="hintplace">年龄</div><input type="text" class="inputzone" id="uage" />
+              </div> -->
+<!--               <div id="username" class="username">
+                <div class="hintplace">头像</div><input type="file" class="inputzone" id="ualator" />
+              </div> -->
+              <button type="button" id="registeraction" class="subumit" data-loading-text='注册中'>注册</button> 
+            </div> 
+          </div>
+      </div>
+
+      <footer>
+        
+      </footer>
+
+
+  </body>
+</html>
